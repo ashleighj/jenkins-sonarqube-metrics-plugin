@@ -1,0 +1,41 @@
+package com.travelstart.plugins.utils
+
+import groovy.json.internal.JsonParserCharArray
+
+// https://sites.google.com/a/athaydes.com/renato-athaydes/code/groovy---rest-client-without-using-libraries
+class RestClient {
+    String hostname
+    String token
+
+
+    def get(final String endpoint, final Map<String, String> params = new TreeMap<>()) {
+        return setupConnection(hostname + endpoint + setupUrlParams(params))
+    }
+
+    protected String setupUrlParams(final Map<String, String> params = new TreeMap<>()) {
+        if (params) {
+            return "?" + params.collect { k,v -> "$k=$v" }.join('&')
+        }
+        else {
+            return ""
+        }
+    }
+
+    protected HttpURLConnection setupConnection(final String url) {
+        def httpConnection = new URL(url).openConnection() as HttpURLConnection
+
+        if (token) {
+            def encoded = "${token}:".bytes.encodeBase64().toString()
+            httpConnection.setRequestProperty("Authorisation", "Basic ${encoded}")
+        }
+
+        httpConnection.setRequestProperty("Content-Type", "application/json")
+
+        return httpConnection
+    }
+
+    def otherParse() {
+        final JsonParserCharArray jsonParser = new JsonParserCharArray()
+    }
+
+}
