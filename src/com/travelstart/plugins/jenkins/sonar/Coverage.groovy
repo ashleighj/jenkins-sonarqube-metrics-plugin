@@ -1,3 +1,4 @@
+#!/usr/bin/env groovy
 package com.travelstart.plugins.jenkins.sonar
 
 import com.travelstart.plugins.traits.HandleException
