@@ -1,7 +1,5 @@
 package com.travelstart.plugins.utils
 
-import groovy.json.internal.JsonParserCharArray
-
 // https://sites.google.com/a/athaydes.com/renato-athaydes/code/groovy---rest-client-without-using-libraries
 class RestClient {
     String hostname
@@ -22,20 +20,16 @@ class RestClient {
     }
 
     protected HttpURLConnection setupConnection(final String url) {
-        def httpConnection = new URL(url).openConnection() as HttpURLConnection
+        final def httpConnection = new URL(url).openConnection() as HttpURLConnection
 
         if (token) {
-            def encoded = "${token}:".bytes.encodeBase64().toString()
-            httpConnection.setRequestProperty("Authorisation", "Basic ${encoded}")
+            final def encoded = "${token}:".bytes.encodeBase64().toString()
+            httpConnection.setRequestProperty("Authorization", "Basic ${encoded}")
         }
 
         httpConnection.setRequestProperty("Content-Type", "application/json")
 
         return httpConnection
-    }
-
-    def otherParse() {
-        final JsonParserCharArray jsonParser = new JsonParserCharArray()
     }
 
 }
