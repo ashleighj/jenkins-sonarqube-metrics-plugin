@@ -3,6 +3,7 @@ import com.travelstart.plugins.jenkins.sonar.Coverage
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval
 
 def call(final Map args) {
+    approvalPlugins()
 
     println(env.SONAR_HOST_URL)
     println(env.SONAR_AUTH_TOKEN)
