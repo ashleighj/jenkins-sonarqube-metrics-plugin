@@ -1,8 +1,6 @@
 #!/usr/bin/groovy
 package com.travelstart.plugins.utils
 
-import com.cloudbees.groovy.cps.NonCPS
-
 class RestClient {
     String hostname
     String token
@@ -19,7 +17,7 @@ class RestClient {
             return ""
         }
     }
-    
+
     HttpURLConnection setupConnection(final String url) {
         final def httpConnection = new URL(url).openConnection() as HttpURLConnection
 

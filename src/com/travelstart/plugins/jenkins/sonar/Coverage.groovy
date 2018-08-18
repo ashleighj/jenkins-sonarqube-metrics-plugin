@@ -35,6 +35,7 @@ class Coverage extends Metric {
             result.addAll(retrieveValues(body, map))
         }
 
+        echo ("${result[0]}")
         return result
     }
 
