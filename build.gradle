@@ -30,6 +30,7 @@ sourceSets {
     test {
         groovy {
             srcDir 'test/src'
+            srcDir 'vars/test/src'
         }
 
         resources {
