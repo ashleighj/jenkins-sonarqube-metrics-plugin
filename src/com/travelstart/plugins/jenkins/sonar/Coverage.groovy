@@ -16,8 +16,9 @@ class Coverage extends Metric {
         this.client = new RestClient(hostname: url, token: token)
     }
 
-
+    @NonCPS
     Double[] retrieveCodeCoverageMetrics(final List<String> projects, final boolean isNew = false) {
+        throw new Exception("AHHHHH")
         if (!projects)
             throw new DataIntegrityException("At least one project ID should be provided")
         final def result = []
