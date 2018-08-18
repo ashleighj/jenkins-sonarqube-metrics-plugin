@@ -21,7 +21,8 @@ def call(final Map args) {
 
     def coverageList = coverage.retrieveCodeCoverageMetrics(projects, newMetric)
     println("IT WORKS!!!!")
-    println(coverageList)
+    println(coverageList[0])
+    println(coverageList[1])
     println("COVERAGE END")
 
 }
