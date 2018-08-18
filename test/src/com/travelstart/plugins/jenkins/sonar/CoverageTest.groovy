@@ -94,6 +94,7 @@ class CoverageTest extends BaseTest {
 
         then:
             def e = thrown(DataIntegrityException)
+
             assertThat(e, notNullValue())
             assertThat(e.rawMessage, notNullValue())
     }
@@ -143,6 +144,7 @@ class CoverageTest extends BaseTest {
 
         then:
             def e = thrown(DataIntegrityException)
+
             assertThat(e, notNullValue())
             assertThat(e.rawMessage, notNullValue())
     }

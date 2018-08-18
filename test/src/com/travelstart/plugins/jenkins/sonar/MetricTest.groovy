@@ -23,9 +23,11 @@ class MetricTest extends BaseTest {
 
         then:
             def e = thrown(SonarqubeException)
+            def expectedResponse = importFile("404.json").text
+
             assertThat(e.code, equalTo(404))
             assertThat(e.message, equalTo("Not Found"))
-            assertThat(e.body, equalTo(importFile("404.json").text))
+            assertThat(e.body, equalTo(expectedResponse))
     }
 
     def "Continue without failure if HTTP response code is between 200 and 299"() {
