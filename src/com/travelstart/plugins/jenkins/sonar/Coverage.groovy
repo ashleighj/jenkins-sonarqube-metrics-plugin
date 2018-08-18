@@ -1,6 +1,7 @@
 #!/usr/bin/env groovy
 package com.travelstart.plugins.jenkins.sonar
 
+import com.cloudbees.groovy.cps.NonCPS
 import com.travelstart.plugins.exceptions.DataIntegrityException
 import com.travelstart.plugins.utils.RestClient
 import groovy.json.JsonSlurper
@@ -15,6 +16,7 @@ class Coverage extends Metric {
         this.client = new RestClient(hostname: url, token: token)
     }
 
+    @NonCPS
     Double[] retrieveCodeCoverageMetrics(final List<String> projects, final boolean isNew = false) {
         if (!projects)
             throw new DataIntegrityException("At least one project ID should be provided")
@@ -43,6 +45,7 @@ class Coverage extends Metric {
         return map
     }
 
+    @NonCPS
     static Double[] retrieveValues(final body, final Map<String, String> params) {
         final def result = []
         final def measures = body?.component?.measures as List

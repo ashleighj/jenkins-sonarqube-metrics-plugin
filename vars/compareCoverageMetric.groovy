@@ -1,9 +1,8 @@
 #!/usr/bin/env groovy
 import com.travelstart.plugins.jenkins.sonar.Coverage
-import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval
 
 def call(final Map args) {
-    approvalPlugins()
+    //approvalPlugins()
 
     println(env.SONAR_HOST_URL)
     println(env.SONAR_AUTH_TOKEN)
@@ -25,32 +24,4 @@ def call(final Map args) {
     println("IT WORKS!!!!")
     println(coverageList)
 
-}
-
-def approvalPlugins() {
-    println("INFO: Whitelisting requirements for Jenkinsfile API Calls")
-
-// Create a list of the required signatures
-    def requiredSigs = [
-            'method java.net.HttpURLConnection setRequestMethod java.lang.String',
-            'method java.net.URL openConnection',
-            'method java.net.URLConnection connect',
-            'method java.net.URLConnection getContent',
-            'method java.net.URLConnection getOutputStream',
-            'method java.net.URLConnection setDoOutput boolean',
-            'method java.net.URLConnection setRequestProperty java.lang.String java.lang.String',
-
-            // Signatures already approved which may have introduced a security vulnerability (recommend clearing):
-            'method java.net.URL openConnection',
-    ]
-
-    // Get a handle on our approval object
-    approver = ScriptApproval.get()
-
-    // Approve each of them
-    requiredSigs.each {
-        approver.approveSignature(it)
-    }
-
-    println("INFO: Jenkinsfile API calls signatures approved")
 }

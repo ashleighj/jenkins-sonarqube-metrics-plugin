@@ -1,11 +1,14 @@
 #!/usr/bin/groovy
 package com.travelstart.plugins.utils
 
+import com.cloudbees.groovy.cps.NonCPS
+
 class RestClient {
     String hostname
     String token
 
 
+    @NonCPS
     def get(final String endpoint, final Map<String, String> params = [:]) {
         return setupConnection(hostname + endpoint + setupUrlParams(params))
     }
@@ -19,6 +22,7 @@ class RestClient {
         }
     }
 
+    @NonCPS
     HttpURLConnection setupConnection(final String url) {
         final def httpConnection = new URL(url).openConnection() as HttpURLConnection
 
