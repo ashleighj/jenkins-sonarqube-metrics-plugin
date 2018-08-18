@@ -3,7 +3,7 @@ package com.travelstart.plugins.jenkins.sonar
 
 import com.travelstart.plugins.exceptions.DataIntegrityException
 import com.travelstart.plugins.utils.RestClient
-import groovy.json.internal.JsonParserCharArray
+import groovy.json.JsonSlurperClassic
 
 class Coverage extends Metric {
     final static COMPONENT = "component"
@@ -22,13 +22,13 @@ class Coverage extends Metric {
 
         projects.each {
             def final map = createUrlParams(it, isNew)
-            def final parser = new JsonParserCharArray()
+            def final parser = new JsonSlurperClassic()
             def final response = client.get( "/api/measures/component", map)
 
             // Verifies that it was successful, otherwise raises an Exception
             isSuccessful(response)
 
-            def body = parser.parse(response.content as InputStream)
+            def body = parser.parseText(response.content.text as String)
 
             result.addAll(retrieveValues(body, map))
         }
