@@ -10,7 +10,7 @@ class RestClient {
         return setupConnection(hostname + endpoint + setupUrlParams(params))
     }
 
-    protected String setupUrlParams(final Map<String, String> params = new TreeMap<>()) {
+    static String setupUrlParams(final Map<String, String> params) {
         if (params) {
             return "?" + params.collect { k,v -> "$k=$v" }.join('&')
         }
@@ -19,7 +19,7 @@ class RestClient {
         }
     }
 
-    protected HttpURLConnection setupConnection(final String url) {
+    HttpURLConnection setupConnection(final String url) {
         final def httpConnection = new URL(url).openConnection() as HttpURLConnection
 
         if (token) {

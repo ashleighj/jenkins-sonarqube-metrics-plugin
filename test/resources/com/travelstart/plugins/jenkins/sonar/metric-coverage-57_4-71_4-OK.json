@@ -1,0 +1,29 @@
+{
+  "component": {
+    "id": "FAKE_ID",
+    "key": "test:1",
+    "name": "Test",
+    "qualifier": "TRK",
+    "measures": [
+      {
+        "metric": "new_coverage",
+        "periods": [
+          {
+            "index": 1,
+            "value": "71.44278606965175"
+          }
+        ]
+      },
+      {
+        "metric": "coverage",
+        "value": "57.4",
+        "periods": [
+          {
+            "index": 1,
+            "value": "13.199999999999996"
+          }
+        ]
+      }
+    ]
+  }
+}
