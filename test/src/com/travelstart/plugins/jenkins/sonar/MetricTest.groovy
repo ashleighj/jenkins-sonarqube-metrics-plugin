@@ -1,4 +1,4 @@
-package com.travelstart.plugins.traits
+package com.travelstart.plugins.jenkins.sonar
 
 import com.travelstart.plugins.BaseTest
 import com.travelstart.plugins.exceptions.SonarqubeException
@@ -9,7 +9,7 @@ import static junit.framework.TestCase.fail
 import static org.mockito.Mockito.doReturn
 import static org.mockito.Mockito.mock
 
-class TraitTest extends BaseTest implements HandleException {
+class MetricTest extends BaseTest {
 
     @Test
     void givenAnHttpResponse_OnErrorCode_ItShouldRaiseAnException() {
@@ -19,7 +19,7 @@ class TraitTest extends BaseTest implements HandleException {
         doReturn(importFile("404.json").text).when(response).content
 
         try {
-            isSuccessful(response)
+            Metric.isSuccessful(response)
             fail()
         } catch (SonarqubeException e) {
             assertEquals(404, e.code)
@@ -38,7 +38,7 @@ class TraitTest extends BaseTest implements HandleException {
         doReturn(200).when(response).responseCode
 
         (200..300).each {
-            isSuccessful(response)
+            Metric.isSuccessful(response)
             assert true
         }
     }
