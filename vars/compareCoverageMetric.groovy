@@ -11,5 +11,6 @@ def call(final Map args) {
     args.newId ?: projects.add(args.originalId)
 
     def coverageList = coverage.retrieveCodeCoverageMetrics(projects, newMetric)
+    println("IT WORKS!!!!")
     println(coverageList)
 }
