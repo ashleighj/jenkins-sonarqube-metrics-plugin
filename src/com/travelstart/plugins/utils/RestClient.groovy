@@ -7,8 +7,6 @@ class RestClient {
     String hostname
     String token
 
-
-    @NonCPS
     def get(final String endpoint, final Map<String, String> params = [:]) {
         return setupConnection(hostname + endpoint + setupUrlParams(params))
     }
@@ -21,8 +19,7 @@ class RestClient {
             return ""
         }
     }
-
-    @NonCPS
+    
     HttpURLConnection setupConnection(final String url) {
         final def httpConnection = new URL(url).openConnection() as HttpURLConnection
 

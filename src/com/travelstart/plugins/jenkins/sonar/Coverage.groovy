@@ -18,8 +18,6 @@ class Coverage extends Metric {
 
     @NonCPS
     Double[] retrieveCodeCoverageMetrics(final List<String> projects, final boolean isNew = false) {
-        println("SHITTTTTT")
-        throw new Exception()
         if (!projects)
             throw new DataIntegrityException("At least one project ID should be provided")
         final def result = []
@@ -37,9 +35,6 @@ class Coverage extends Metric {
             result.addAll(retrieveValues(body, map))
         }
 
-        println("inside")
-        println(result)
-
         return result
     }
 
@@ -51,7 +46,6 @@ class Coverage extends Metric {
         return map
     }
 
-    @NonCPS
     static Double[] retrieveValues(final body, final Map<String, String> params) {
         final def result = []
         final def measures = body?.component?.measures as List
