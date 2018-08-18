@@ -19,7 +19,6 @@ class RestClient {
         }
     }
 
-    @NonCPS
     HttpURLConnection setupConnection(final String url) {
         final def httpConnection = new URL(url).openConnection() as HttpURLConnection
 
