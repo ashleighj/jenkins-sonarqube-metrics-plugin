@@ -2,45 +2,45 @@ package com.travelstart.plugins.jenkins.sonar
 
 import com.travelstart.plugins.BaseTest
 import com.travelstart.plugins.exceptions.SonarqubeException
-import org.junit.Test
 
-import static junit.framework.TestCase.assertEquals
-import static junit.framework.TestCase.fail
+import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.Matchers.equalTo
 import static org.mockito.Mockito.doReturn
 import static org.mockito.Mockito.mock
 
 class MetricTest extends BaseTest {
 
-    @Test
-    void givenAnHttpResponse_OnErrorCode_ItShouldRaiseAnException() {
-        final def response = mock(HttpURLConnection.class)
-        doReturn(404).when(response).responseCode
-        doReturn("Not Found").when(response).responseMessage
-        doReturn(importFile("404.json").text).when(response).content
+    def "Raise An Exception if HTTP response status code is not between 200 and 299"() {
+        given:
+            def response = mock(HttpURLConnection.class)
 
-        try {
+            doReturn(404).when(response).responseCode
+            doReturn("Not Found").when(response).responseMessage
+            doReturn(importFile("404.json").text).when(response).content
+
+        when:
             Metric.isSuccessful(response)
-            fail()
-        } catch (SonarqubeException e) {
-            assertEquals(404, e.code)
-            assertEquals("Not Found", e.message)
-            assertEquals(importFile("404.json").text, e.body)
-            assert true
-        } catch (Exception e) {
-            e.printStackTrace()
-            fail("Unexpected Exception: It should handle any HTTP error from the server")
-        }
+
+        then:
+            def e = thrown(SonarqubeException)
+            assertThat(e.code, equalTo(404))
+            assertThat(e.message, equalTo("Not Found"))
+            assertThat(e.body, equalTo(importFile("404.json").text))
     }
 
-    @Test
-    void givenAnHttpResponse_OnSuccess_ItShouldReturnTrue() {
-        final def response = mock(HttpURLConnection.class)
-        doReturn(200).when(response).responseCode
+    def "Continue without failure if HTTP response code is between 200 and 299"() {
+        given:
+            def response = mock(HttpURLConnection.class)
 
-        (200..300).each {
-            Metric.isSuccessful(response)
-            assert true
-        }
+            doReturn(200).when(response).responseCode
+
+        when:
+            (200..300).each {
+                Metric.isSuccessful(response)
+            }
+
+        then:
+            notThrown(Exception)
     }
 }
 

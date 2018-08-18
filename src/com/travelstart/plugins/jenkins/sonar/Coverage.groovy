@@ -20,6 +20,7 @@ class Coverage extends Metric {
     Double[] retrieveCodeCoverageMetrics(final List<String> projects, final boolean isNew = false) {
         if (!projects)
             throw new DataIntegrityException("At least one project ID should be provided")
+
         final def result = []
 
         projects.each {
@@ -35,8 +36,6 @@ class Coverage extends Metric {
             result.addAll(retrieveValues(body, map))
         }
 
-        echo ("RESULT")
-        echo ("${result[0]}")
         return result
     }
 

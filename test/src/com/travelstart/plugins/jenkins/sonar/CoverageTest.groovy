@@ -2,15 +2,14 @@ package com.travelstart.plugins.jenkins.sonar
 
 import com.travelstart.plugins.BaseTest
 import com.travelstart.plugins.exceptions.DataIntegrityException
-import org.junit.After
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
 import org.mockserver.integration.ClientAndServer
 import org.mockserver.model.Parameter
+import spock.lang.*
 
-import static junit.framework.Assert.assertNotNull
-import static junit.framework.Assert.fail
+import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.Matchers.*
+
+
 import static org.mockserver.model.HttpRequest.request
 import static org.mockserver.model.HttpResponse.response
 
@@ -18,54 +17,44 @@ class CoverageTest extends BaseTest {
     String hostname
     int port
     ClientAndServer mockServer
+    Coverage coverage
 
+    @Shared def random = new Random()
+    @Shared def token = "1234567890"
 
-    final def random = new Random()
-    final def token = "1234567890"
-
-    @Before
-    void buildScenario() {
+    def setup() {
         port = random.nextInt(6000) + 2000
         hostname = "http://localhost:${port}"
-
-        setupMockServer()
-    }
-
-    void setupMockServer() {
         mockServer = ClientAndServer.startClientAndServer(port)
+        coverage = new Coverage(hostname, token)
     }
 
-
-    @After
-    void destroyScenario() {
+    void cleanup() {
         hostname = null
         port = 0
 
-        stopMockServer()
-    }
-
-    void stopMockServer() {
         if (mockServer != null) {
             mockServer.stop()
+            mockServer = null
         }
     }
 
     void generateOKCoverageResponses(final String component, final String path, final String metrics) {
         final def urlParams = [new Parameter("component", component), new Parameter("metricKeys", metrics)]
-        final def file = importFile(path)
+        final def body = importFile(path).text
 
         //https://localhost:{port}/api/measures/component?component={component}&metricKeys=coverage
         mockServer.when(
                 request()
-                    .withMethod("GET")
-                    .withPath("/api/measures/component")
-                    .withQueryStringParameters(urlParams)
-                    .withHeader("Authorization", "Basic MTIzNDU2Nzg5MDo="))
-                    .respond(
+                        .withMethod("GET")
+                        .withPath("/api/measures/component")
+                        .withQueryStringParameters(urlParams)
+                        .withHeader("Authorization", "Basic MTIzNDU2Nzg5MDo="))
+                .respond(
                 response()
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(file.text)
-                    .withStatusCode(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(body)
+                        .withStatusCode(200)
         )
     }
 
@@ -73,91 +62,88 @@ class CoverageTest extends BaseTest {
         generateOKCoverageResponses(component, path, "coverage")
     }
 
-    @Test
-    void givenAProjectId_ThatExists_ItShould_GetMetricsFromSonarqube() {
-        generateOKCoverageResponses("test:1", "metric-coverage-57_4-OK.json")
+    def "Get a coverage metric for one project from Sonarqube"() {
+        given:
+            generateOKCoverageResponses("test:1", "metric-coverage-57_4-OK.json")
 
-        final def coverage = new Coverage(hostname, token)
-        Assert.assertArrayEquals((Double[]) [57.4], coverage.retrieveCodeCoverageMetrics(["test:1"]))
+        when:
+            coverage.retrieveCodeCoverageMetrics(["test:1"])
+
+        then:
+            [57.4]
     }
 
-    @Test
-    void givenAPairOfProjectsIds_ThatBothExists_ItShould_GetMetricsFromSonarqube() {
-        generateOKCoverageResponses("test:1", "metric-coverage-57_4-OK.json")
-        generateOKCoverageResponses("test:2", "metric-coverage-48_92-OK.json")
+    def "Get coverage metrics for a project pair from Sonarqube"() {
+        given:
+            generateOKCoverageResponses("test:1", "metric-coverage-57_4-OK.json")
+            generateOKCoverageResponses("test:2", "metric-coverage-48_92-OK.json")
 
-        final def coverage = new Coverage(hostname, token)
-        Assert.assertArrayEquals((Double[]) [57.4, 48.92], coverage.retrieveCodeCoverageMetrics(["test:1", "test:2"]))
+        when:
+            coverage.retrieveCodeCoverageMetrics(["test:1", "test:2"])
+
+        then:
+            [57.4, 48.92]
     }
 
-    @Test
-    void givenAProjectId_WhichDataIsIncorrect_ItShould_RaiseADataIntegritytException() {
-        generateOKCoverageResponses("test:2", "metric-coverage-48_92-DataFormatException.json")
+    def "Raise An Exception if the data received from Sonarqube is Incorrect"() {
+        given:
+            generateOKCoverageResponses("test:2", "metric-coverage-48_92-DataFormatException.json")
 
-        final def coverage = new Coverage(hostname, token)
-        try {
+        when:
             coverage.retrieveCodeCoverageMetrics(["test:2"])
-            fail("It should failed if that has wrong data types")
 
-        } catch (DataIntegrityException e) {
-            assertNotNull(e.getMessage())
-            assertNotNull(e.rawMessage)
-        } catch (Exception e) {
-            e.printStackTrace()
-            fail("It should raise a DataFormatException not an non-handled exception")
-        }
+        then:
+            def e = thrown(DataIntegrityException)
+            assertThat(e, notNullValue())
+            assertThat(e.rawMessage, notNullValue())
     }
 
-    @Test
-    void givenAProjectId_WhichDataHasNullValues_ItShould_RaiseADataIntegritytException() {
-        generateOKCoverageResponses("test:2", "metric-coverage-48_92-DataFormatException-NullValue.json")
+    def "Raise An Exception if the data received from Sonarqube has Null values"() {
+        given:
+            generateOKCoverageResponses("test:2", "metric-coverage-48_92-DataFormatException-NullValue.json")
 
-        final def coverage = new Coverage(hostname, token)
-        try {
+        when:
             coverage.retrieveCodeCoverageMetrics(["test:2"])
-            fail("It should failed if that has null values")
 
-        } catch (DataIntegrityException e) {
-            assertNotNull(e.getMessage())
-            assertNotNull(e.rawMessage)
-        } catch (Exception e) {
-            e.printStackTrace()
-            fail("It should raise a DataFormatException not an non-handled exception")
-        }
+        then:
+            def e = thrown(DataIntegrityException)
+            assertThat(e, notNullValue())
+            assertThat(e.rawMessage, notNullValue())
     }
 
-    @Test
-    void givenAProjectId_ThatExists_OnNewFlag_ItShould_GetMetricsFromSonarqube() {
-        generateOKCoverageResponses("test:1", "metric-coverage-57_4-71_4-OK.json", "coverage,new_coverage")
+    def "Get new coverage and current coverage metric for a project from Sonarqube"() {
+        given:
+            generateOKCoverageResponses("test:1", "metric-coverage-57_4-71_4-OK.json", "coverage,new_coverage")
 
-        final def coverage = new Coverage(hostname, token)
-        Assert.assertArrayEquals((Double[]) [57.4, 71.44], coverage.retrieveCodeCoverageMetrics(["test:1"], true))
+        when:
+            coverage.retrieveCodeCoverageMetrics(["test:1"], true)
+
+        then:
+            [57.4, 71.44]
     }
 
-    @Test
-    void givenAPairOfProjectsIds_ThatBothExists_OnNewFlag_ItShould_GetMetricsFromSonarqube() {
-        generateOKCoverageResponses("test:1", "metric-coverage-57_4-71_4-OK.json", "coverage,new_coverage")
-        generateOKCoverageResponses("test:2", "metric-coverage-48_92-13_19-OK.json", "coverage,new_coverage")
+    def "Get new coverage and current coverage metric for a pair of projects from Sonarqube"() {
+        given:
+            generateOKCoverageResponses("test:1", "metric-coverage-57_4-71_4-OK.json", "coverage,new_coverage")
+            generateOKCoverageResponses("test:2", "metric-coverage-48_92-13_19-OK.json", "coverage,new_coverage")
 
-        final def coverage = new Coverage(hostname, token)
-        Assert.assertArrayEquals((Double[]) [57.4, 71.44, 48.92, 13.2], coverage.retrieveCodeCoverageMetrics(["test:1", "test:2"], true))
+        when:
+            coverage.retrieveCodeCoverageMetrics(["test:1", "test:2"], true)
+
+        then:
+            [57.4, 71.44, 48.92, 13.2]
     }
 
-    @Test
-    void givenNoIds_OnCodeCoverageRequest_RaiseADataIntegritytException() {
-        generateOKCoverageResponses("test:1", "metric-coverage-57_4-OK.json")
+    def "Raise An Exception if no project Ids were provided"() {
+        given:
+            generateOKCoverageResponses("test:1", "metric-coverage-57_4-OK.json")
 
-        final def coverage = new Coverage(hostname, token)
-        try {
+        when:
             coverage.retrieveCodeCoverageMetrics([])
-            fail("It should failed if no IDs where provided")
 
-        } catch (DataIntegrityException e) {
-            assertNotNull(e.getMessage())
-            assertNotNull(e.rawMessage)
-        } catch (Exception e) {
-            e.printStackTrace()
-            fail("It should raise a DataFormatException not an non-handled exception")
-        }
+        then:
+            def e = thrown(DataIntegrityException)
+            assertThat(e, notNullValue())
+            assertThat(e.rawMessage, notNullValue())
     }
 }
