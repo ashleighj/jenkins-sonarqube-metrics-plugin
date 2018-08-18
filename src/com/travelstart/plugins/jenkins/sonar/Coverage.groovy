@@ -18,7 +18,7 @@ class Coverage extends Metric {
 
     @NonCPS
     Double[] retrieveCodeCoverageMetrics(final List<String> projects, final boolean isNew = false) {
-        throw new Exception("AHHHHH")
+        throw new Exception()
         if (!projects)
             throw new DataIntegrityException("At least one project ID should be provided")
         final def result = []
