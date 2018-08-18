@@ -1,11 +1,11 @@
 #!/usr/bin/groovy
-package com.travelstart.plugins.traits
+package com.travelstart.plugins.jenkins.sonar
 
 import com.travelstart.plugins.exceptions.SonarqubeException
 
-trait HandleException {
+abstract class Metric {
 
-    void isSuccessful(final HttpURLConnection urlConnection) {
+    static void isSuccessful(final HttpURLConnection urlConnection) {
         if (!(urlConnection.responseCode in 200..300)) {
             final SonarqubeException e = new SonarqubeException()
             e.message = urlConnection.responseMessage
