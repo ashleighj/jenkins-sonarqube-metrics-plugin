@@ -4,6 +4,4 @@ class SonarqubeException extends RuntimeException {
     String message
     int code
     String body
-
-
 }
