@@ -34,6 +34,10 @@ class Coverage extends Metric {
 
             result.addAll(retrieveValues(body, map))
         }
+
+        println("inside")
+        println(result)
+
         return result
     }
 
