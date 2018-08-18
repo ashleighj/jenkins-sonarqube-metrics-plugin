@@ -1,7 +1,8 @@
+#!/usr/bin/groovy
 package com.travelstart.plugins.utils
 
 // https://sites.google.com/a/athaydes.com/renato-athaydes/code/groovy---rest-client-without-using-libraries
-class RestClient implements Serializable{
+class RestClient {
     String hostname
     String token
 

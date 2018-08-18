@@ -1,6 +1,7 @@
+#!/usr/bin/groovy
 package com.travelstart.plugins.exceptions
 
-class SonarqubeException extends RuntimeException implements Serializable{
+class SonarqubeException extends RuntimeException {
     String message
     int code
     String body

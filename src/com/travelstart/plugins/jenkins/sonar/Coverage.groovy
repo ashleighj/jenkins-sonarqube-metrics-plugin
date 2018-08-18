@@ -6,7 +6,7 @@ import com.travelstart.plugins.traits.HandleException
 import com.travelstart.plugins.utils.RestClient
 import groovy.json.internal.JsonParserCharArray
 
-class Coverage implements HandleException, Serializable{
+class Coverage implements HandleException {
     final static COMPONENT = "component"
     final static METRIC_KEYS = "metricKeys"
 

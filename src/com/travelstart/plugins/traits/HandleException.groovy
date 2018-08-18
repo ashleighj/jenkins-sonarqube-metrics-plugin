@@ -1,3 +1,4 @@
+#!/usr/bin/groovy
 package com.travelstart.plugins.traits
 
 import com.travelstart.plugins.exceptions.SonarqubeException
