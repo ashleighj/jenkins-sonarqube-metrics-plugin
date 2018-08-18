@@ -10,8 +10,10 @@ def call(final Map args) {
     final def projects = []
     final def newMetric = args.new_coverage ? (args.new_coverage) as Boolean : false
 
-    args.originalId ?: projects.add(args.originalId)
-    args.newId ?: projects.add(args.originalId)
+    projects.add(args.originalId)
+    projects.add(args.newId)
+    //args.originalId ?: projects.add(args.originalId)
+    //args.newId ?: projects.add(args.newId)
 
     println(args.originalId)
     println(args.newId)
