@@ -7,7 +7,7 @@ class RestClient {
     String token
 
 
-    def get(final String endpoint, final Map<String, String> params = new TreeMap<>()) {
+    def get(final String endpoint, final Map<String, String> params = [:]) {
         return setupConnection(hostname + endpoint + setupUrlParams(params))
     }
 

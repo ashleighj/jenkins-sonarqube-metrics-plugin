@@ -36,7 +36,7 @@ class Coverage extends Metric {
     }
 
     static Map<String, String> createUrlParams(final String projectId, final boolean isNew) {
-        def final map = new TreeMap()
+        def final map = [:]
         map.put(COMPONENT, projectId)
         map.put(METRIC_KEYS, isNew? "coverage,new_coverage" : "coverage")
 
