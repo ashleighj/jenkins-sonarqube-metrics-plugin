@@ -97,7 +97,7 @@ class CoverageTest extends BaseTest {
         final def coverage = new Coverage(hostname, token)
         try {
             coverage.retrieveCodeCoverageMetrics(["test:2"])
-            assert false
+            fail("It should failed if that has wrong data types")
 
         } catch (DataIntegrityException e) {
             assertNotNull(e.getMessage())
@@ -115,7 +115,7 @@ class CoverageTest extends BaseTest {
         final def coverage = new Coverage(hostname, token)
         try {
             coverage.retrieveCodeCoverageMetrics(["test:2"])
-            assert false
+            fail("It should failed if that has null values")
 
         } catch (DataIntegrityException e) {
             assertNotNull(e.getMessage())
@@ -141,5 +141,23 @@ class CoverageTest extends BaseTest {
 
         final def coverage = new Coverage(hostname, token)
         Assert.assertArrayEquals((Double[]) [57.4, 71.44, 48.92, 13.2], coverage.retrieveCodeCoverageMetrics(["test:1", "test:2"], true))
+    }
+
+    @Test
+    void givenNoIds_OnCodeCoverageRequest_RaiseADataIntegritytException() {
+        generateOKCoverageResponses("test:1", "metric-coverage-57_4-OK.json")
+
+        final def coverage = new Coverage(hostname, token)
+        try {
+            coverage.retrieveCodeCoverageMetrics([])
+            fail("It should failed if no IDs where provided")
+
+        } catch (DataIntegrityException e) {
+            assertNotNull(e.getMessage())
+            assertNotNull(e.rawMessage)
+        } catch (Exception e) {
+            e.printStackTrace()
+            fail("It should raise a DataFormatException not an non-handled exception")
+        }
     }
 }

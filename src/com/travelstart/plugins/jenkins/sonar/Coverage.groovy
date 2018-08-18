@@ -16,6 +16,8 @@ class Coverage extends Metric {
     }
 
     Double[] retrieveCodeCoverageMetrics(final List<String> projects, final boolean isNew = false) {
+        if (!projects)
+            throw new DataIntegrityException("At least one project ID should be provided")
         final def result = []
 
         projects.each {
