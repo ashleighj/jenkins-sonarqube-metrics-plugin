@@ -4,9 +4,6 @@ import com.travelstart.plugins.jenkins.sonar.Coverage
 
 def call(final Map args) {
 
-    println(env.SONAR_HOST_URL)
-    println(env.SONAR_AUTH_TOKEN)
-
     final String gitRepo = env.GIT_REPO ?: sh(returnStdout: true, script: 'git config remote.origin.url').trim().replace("https://github.com","").replace(".git", "")
     final String gitToken = env.GIT_TOKEN
     final String gitPrId = env.CHANGE_ID ?: sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
@@ -20,15 +17,12 @@ def call(final Map args) {
     //args.originalId ?: projects.add(args.originalId)
     //args.newId ?: projects.add(args.newId)
 
-    println(args.originalId)
-    println(args.newId)
-
     try {
         coverage.compare(gitPrId, projects, newMetric)
     } catch (PluginException e) {
-        println(e.code)
-        println(e.message)
-        println(e.body)
+        echo "Error Code: ${e.code}"
+        echo "Error message: ${e.message}"
+        echo "Error Body: ${e.body}"
         e.printStackTrace()
         throw e
     }

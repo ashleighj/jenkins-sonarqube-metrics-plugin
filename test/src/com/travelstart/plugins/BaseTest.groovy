@@ -22,7 +22,7 @@ abstract class BaseTest extends Specification {
         final def uri = new File("${packagePath}/${path}").toURI()
         return new File(uri)
     }
-    
+
     def setupServer() {
         port = random.nextInt(8000) + 1000
         hostname = "http://localhost:${port}"
@@ -66,5 +66,4 @@ abstract class BaseTest extends Specification {
                         .withStatusCode(statusCode)
         )
     }
-
 }
