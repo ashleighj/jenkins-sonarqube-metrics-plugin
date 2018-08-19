@@ -43,6 +43,4 @@ abstract class Metric {
 
         return githubClient.post("${repository}/statuses/${prId}", params, JsonOutput.toJson(body))
     }
-
-    abstract def update(final String prId, final String state, final String targetUrl, final String description)
 }
