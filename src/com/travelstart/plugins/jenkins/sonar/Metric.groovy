@@ -1,6 +1,7 @@
 #!/usr/bin/groovy
 package com.travelstart.plugins.jenkins.sonar
 
+import com.cloudbees.groovy.cps.NonCPS
 import com.travelstart.plugins.exceptions.GithubException
 import com.travelstart.plugins.exceptions.PluginException
 import com.travelstart.plugins.exceptions.SonarqubeException
@@ -35,6 +36,7 @@ abstract class Metric {
         }
     }
 
+    @NonCPS
     def updateGithubPullRequestStatus(final String prId, final String state,
                                       final String targetUrl, final String description) {
         def params = [access_token: gitToken]

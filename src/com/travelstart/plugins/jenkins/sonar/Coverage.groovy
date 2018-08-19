@@ -89,6 +89,7 @@ class Coverage extends Metric {
         return result
     }
 
+    @NonCPS
     @Override
     def update(final String prId, final String state, final String targetUrl, final String description) {
         final def response = updateGithubPullRequestStatus(prId, state, targetUrl, description)
