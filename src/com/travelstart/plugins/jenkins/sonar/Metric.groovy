@@ -1,7 +1,6 @@
 #!/usr/bin/groovy
 package com.travelstart.plugins.jenkins.sonar
 
-import com.cloudbees.groovy.cps.NonCPS
 import com.travelstart.plugins.exceptions.GithubException
 import com.travelstart.plugins.exceptions.PluginException
 import com.travelstart.plugins.exceptions.SonarqubeException

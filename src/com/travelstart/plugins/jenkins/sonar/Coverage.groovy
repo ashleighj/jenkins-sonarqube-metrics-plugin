@@ -22,7 +22,6 @@ class Coverage extends Metric {
         this.gitToken = gitToken
     }
 
-    @NonCPS
     def compare(final String prId, final List<String> projects, final boolean isNew = false) {
         final def metrics = retrieveCodeCoverageMetrics(projects, isNew)
         final def comparison = verifyCoverage(metrics)
@@ -31,7 +30,6 @@ class Coverage extends Metric {
         return update(prId, comparison.state, targetUrl, comparison.message)
     }
 
-    @NonCPS
     Double[] retrieveCodeCoverageMetrics(final List<String> projects, final boolean isNew = false) {
         if (!projects)
             throw new DataIntegrityException("At least one project ID should be provided")
@@ -90,7 +88,6 @@ class Coverage extends Metric {
         return result
     }
 
-    @NonCPS
     @Override
     def update(final String prId, final String state, final String targetUrl, final String description) {
         final def response = updateGithubPullRequestStatus(prId, state, targetUrl, description)
