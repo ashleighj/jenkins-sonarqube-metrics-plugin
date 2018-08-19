@@ -1,7 +1,6 @@
 #!/usr/bin/env groovy
 package com.travelstart.plugins.jenkins.sonar
 
-import com.cloudbees.groovy.cps.NonCPS
 import com.travelstart.plugins.exceptions.DataIntegrityException
 import com.travelstart.plugins.exceptions.GithubException
 import com.travelstart.plugins.exceptions.SonarqubeException
@@ -34,7 +33,7 @@ class Coverage extends Metric {
         if (!projects)
             throw new DataIntegrityException("At least one project ID should be provided")
 
-        final def result = []
+        Double[] result = []
 
         projects.each {
             def final map = createUrlParams(it, isNew)
@@ -45,8 +44,7 @@ class Coverage extends Metric {
             isSuccessful(response, SonarqubeException)
 
             def body = parser.parseText(response.content.text as String)
-
-            result.addAll(retrieveValues(body, map))
+            result += retrieveValues(body, map)
         }
 
         return result
