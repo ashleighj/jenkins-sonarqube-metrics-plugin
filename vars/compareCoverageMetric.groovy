@@ -8,7 +8,7 @@ def call(final Map args) {
     final String gitToken = env.GIT_TOKEN
     final String gitPrId = env.CHANGE_ID ?: sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
 
-    final String sonarToken = env.SONAR_AUTH_TOKEN ?: "${ENV_SONAR_LOGIN}:${ENV_SONAR_PASSWORD}"
+    final String sonarToken = env.SONAR_AUTH_TOKEN ?: "${env.ENV_SONAR_LOGIN}:${env.ENV_SONAR_PASSWORD}"
 
     final def coverage = new Coverage(env.SONAR_HOST_URL, sonarToken, gitRepo, gitToken)
     final def projects = []
