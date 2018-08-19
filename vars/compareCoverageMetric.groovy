@@ -24,5 +24,4 @@ def call(final Map args) {
 
     coverage.compare(gitPrId, projects, newMetric)
 
-
 }
