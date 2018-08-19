@@ -112,6 +112,7 @@ class CoverageTest extends BaseTest {
 
             assertThat(e, notNullValue())
             assertThat(e.rawMessage, notNullValue())
+            assertThat(e.message, notNullValue())
     }
 
     def "Raise An Exception if the data received from Sonarqube has Null values"() {
@@ -125,6 +126,7 @@ class CoverageTest extends BaseTest {
             def e = thrown(DataIntegrityException)
             assertThat(e, notNullValue())
             assertThat(e.rawMessage, notNullValue())
+            assertThat(e.message, notNullValue())
     }
 
     def "Get new coverage and current coverage metric for a project from Sonarqube"() {
@@ -162,6 +164,7 @@ class CoverageTest extends BaseTest {
 
             assertThat(e, notNullValue())
             assertThat(e.rawMessage, notNullValue())
+            assertThat(e.message, notNullValue())
     }
 
     def "Compare Coverage Metric and update status for failure"() {

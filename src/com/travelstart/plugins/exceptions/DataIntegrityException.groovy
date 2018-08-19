@@ -1,14 +1,13 @@
 #!/usr/bin/groovy
 package com.travelstart.plugins.exceptions
 
-class DataIntegrityException extends RuntimeException {
-
-    final static MESSAGE = "Data received is not well formed or doesn't contain the expected values"
+class DataIntegrityException extends PluginException {
 
     String rawMessage
 
     DataIntegrityException(final String rawMessage) {
-        super(MESSAGE)
+        super()
         this.rawMessage = rawMessage
+        this.message = rawMessage
     }
 }
