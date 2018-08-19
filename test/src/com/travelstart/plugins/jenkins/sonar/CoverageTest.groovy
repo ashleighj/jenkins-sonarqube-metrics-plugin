@@ -14,19 +14,21 @@ import static org.mockserver.model.HttpRequest.request
 import static org.mockserver.model.HttpResponse.response
 
 class CoverageTest extends BaseTest {
-    String hostname
-    int port
-    ClientAndServer mockServer
-    Coverage coverage
+    def hostname
+    def port
+    def mockServer
+    def coverage
 
     @Shared def random = new Random()
     @Shared def token = "1234567890"
+    @Shared def gitToken = "1234567890"
+    @Shared def gitRepo = "/mock/project"
 
     def setup() {
         port = random.nextInt(6000) + 2000
         hostname = "http://localhost:${port}"
         mockServer = ClientAndServer.startClientAndServer(port)
-        coverage = new Coverage(hostname, token)
+        coverage = new Coverage(hostname, token, gitRepo, gitToken)
     }
 
     void cleanup() {
@@ -60,6 +62,19 @@ class CoverageTest extends BaseTest {
 
     void generateOKCoverageResponses(final String component, final String path) {
         generateOKCoverageResponses(component, path, "coverage")
+    }
+
+    def "Coverage Object was build with the correct parameters"() {
+        when:
+            coverage
+
+        then:
+            assertThat(coverage.context, equalTo(Coverage.CONTEXT))
+            assertThat(coverage.repository, equalTo(gitRepo))
+            assertThat(coverage.gitToken, equalTo(gitToken))
+            assertThat(coverage.sonarqubeClient, notNullValue())
+            assertThat(coverage.sonarqubeClient.token, equalTo(token))
+            assertThat(coverage.sonarqubeClient.hostname, equalTo(hostname as String))
     }
 
     def "Get a coverage metric for one project from Sonarqube"() {

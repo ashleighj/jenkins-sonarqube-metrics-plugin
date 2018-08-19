@@ -9,11 +9,15 @@ import groovy.json.JsonSlurper
 class Coverage extends Metric {
     final static COMPONENT = "component"
     final static METRIC_KEYS = "metricKeys"
+    final static CONTEXT = "Code Coverage"
 
-    RestClient client
+    RestClient sonarqubeClient
 
-    Coverage(final String url, final String token) {
-        this.client = new RestClient(hostname: url, token: token)
+    Coverage(final String url, final String sonarToken, final String gitRepo, final String gitToken) {
+        this.sonarqubeClient = new RestClient(hostname: url, token: sonarToken)
+        this.context = CONTEXT
+        this.repository = gitRepo
+        this.gitToken = gitToken
     }
 
     @NonCPS
@@ -26,7 +30,7 @@ class Coverage extends Metric {
         projects.each {
             def final map = createUrlParams(it, isNew)
             def final parser = new JsonSlurper()
-            def final response = client.get( "/api/measures/component", map)
+            def final response = sonarqubeClient.get( "/api/measures/component", map)
 
             // Verifies that it was successful, otherwise raises an Exception
             isSuccessful(response)
