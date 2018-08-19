@@ -150,4 +150,20 @@ class CoverageTest extends BaseTest {
             assertThat(e, notNullValue())
             assertThat(e.rawMessage, notNullValue())
     }
+
+    def "Compare Coverage Metric and update status"() {
+        given:
+            def prId = "435aaa4232342bbb"
+            generateOKCoverageResponses("test:1", "metric-coverage-57_4-OK.json")
+            generateOKCoverageResponses("test:2", "metric-coverage-48_92-OK.json")
+            generateGithubResponse(prId, "github-status-request-failure-57_4-48_92.json", "github-status-response-failure-57_4-48_92.json", coverage.gitToken)
+
+        when:
+            def result = coverage.compare(prId, ["test:1", "test:2"])
+        then:
+            notThrown(Exception)
+            assertThat(result.state, equalTo("failure"))
+            assertThat(result.context, equalTo(Coverage.CONTEXT))
+            assertThat(result.desciption, equalTo("New code reduced the coverage from 57.4% to 48.92%"))
+    }
 }

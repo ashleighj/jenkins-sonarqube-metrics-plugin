@@ -11,8 +11,6 @@ import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.mockito.Mockito.doReturn
 import static org.mockito.Mockito.mock
-import static org.mockserver.model.HttpRequest.request
-import static org.mockserver.model.HttpResponse.response
 
 class MetricTest extends BaseTest {
     @Shared def metric = new MetricImpl()
@@ -24,28 +22,6 @@ class MetricTest extends BaseTest {
 
     void cleanup() {
         cleanupServer()
-    }
-
-    void generateGithubResponse(final String prId, final String reqPath, final String resPath,
-                                final String accessToken, final int statusCode = 201) {
-        final def urlParams = [new Parameter("access_token", accessToken)]
-        final def resBody = importFile(resPath).text
-        final def reqBody = importFile(reqPath).text
-
-        //https://localhost:{port}/repos/mock/repo/{prId}?{urlParams}
-        mockServer.when(
-                request()
-                        .withMethod("POST")
-                        .withPath("/mock/repo/${prId}")
-                        .withBody(reqBody)
-                        .withQueryStringParameters(urlParams)
-                        .withHeader("Content-Type", "application/json"))
-                .respond(
-                response()
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(resBody)
-                        .withStatusCode(statusCode)
-        )
     }
 
     def "Raise An Exception if HTTP response status code is not between 200 and 299"() {
@@ -86,14 +62,12 @@ class MetricTest extends BaseTest {
         given:
             def request = parser.parseText(importFile("github-status-request-success.json").text)
             def prId = "435aaa4232342bbb"
-            def authToken = "ab58dbai399"
-
             def metricImpl = new MetricImpl(hostname as String)
 
-            generateGithubResponse(prId, "github-status-request-success.json", "github-status-response-success.json", authToken)
+            generateGithubResponse(prId, "github-status-request-success.json", "github-status-response-success.json", metricImpl.gitToken)
 
         when:
-            def response = metricImpl.updateGithubPullRequestStatus(prId, authToken, request.state, request.target_url, request.description)
+            def response = metricImpl.updateGithubPullRequestStatus(prId, request.state, request.target_url, request.description)
 
         then:
             def body = parser.parseText(response.content.text as String)
@@ -112,6 +86,7 @@ class MetricTest extends BaseTest {
         MetricImpl() {
             context = "Mock Metric"
             repository = "/mock/repo"
+            gitToken = "ab58dbai399"
         }
 
         MetricImpl(final String gitHostname) {

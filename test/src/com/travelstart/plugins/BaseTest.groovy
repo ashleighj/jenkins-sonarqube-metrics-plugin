@@ -1,8 +1,12 @@
 package com.travelstart.plugins
 
 import org.mockserver.integration.ClientAndServer
+import org.mockserver.model.Parameter
 import spock.lang.Shared
 import spock.lang.Specification
+
+import static org.mockserver.model.HttpRequest.request
+import static org.mockserver.model.HttpResponse.response
 
 abstract class BaseTest extends Specification {
     def hostname
@@ -33,6 +37,28 @@ abstract class BaseTest extends Specification {
             mockServer.stop()
             mockServer = null
         }
+    }
+
+    void generateGithubResponse(final String prId, final String reqPath, final String resPath,
+                                final String accessToken, final int statusCode = 201) {
+        final def urlParams = [new Parameter("access_token", accessToken)]
+        final def resBody = importFile(resPath).text
+        final def reqBody = importFile(reqPath).text
+
+        //https://localhost:{port}/repos/mock/repo/{prId}?{urlParams}
+        mockServer.when(
+                request()
+                        .withMethod("POST")
+                        .withPath("/mock/repo/${prId}")
+                        .withBody(reqBody)
+                        .withQueryStringParameters(urlParams)
+                        .withHeader("Content-Type", "application/json"))
+                .respond(
+                response()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(resBody)
+                        .withStatusCode(statusCode)
+        )
     }
 
 }

@@ -23,9 +23,9 @@ abstract class Metric {
         }
     }
 
-    def updateGithubPullRequestStatus(final String prId, final String authToken, final String state,
+    def updateGithubPullRequestStatus(final String prId, final String state,
                                       final String targetUrl, final String description) {
-        def params = [access_token: authToken]
+        def params = [access_token: gitToken]
         def body = [state: state, target_url: targetUrl, context: context, description: description]
         def githubClient = new RestClient(hostname: gitHostname)
 
