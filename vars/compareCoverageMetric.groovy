@@ -10,7 +10,6 @@ def call(final Map args) {
 
     final String sonarToken = env.SONAR_AUTH_TOKEN ?: "${env.SONAR_LOGIN}:${env.SONAR_PASSWORD}"
     echo "SONAR_TOKEN=${sonarToken}"
-    echo "SONAR_TOKEN_BASE64=${sonarToken.bytes.encodeBase64()}"
 
     final def coverage = new Coverage(env.SONAR_HOST_URL, sonarToken, gitRepo, gitToken)
     final def projects = []
