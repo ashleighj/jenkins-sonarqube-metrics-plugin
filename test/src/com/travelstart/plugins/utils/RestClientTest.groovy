@@ -139,7 +139,7 @@ class RestClientTest extends BaseTest {
             assertThat(body?.get(0)?.email, equalTo("Eliseo@gardner.biz"))
     }
 
-    def "Return an OK HTTP response for a correct HTTPRequest with URL params and Security Headers"() {
+    def "Return an OK HTTP response for a correct HTTPRequest with URL params and Security token"() {
         given:
             def endpoint = "/todos/1"
             def params = [filter1: "val1", filter2: "val2"]
@@ -155,6 +155,24 @@ class RestClientTest extends BaseTest {
             assertThat(response.getURL().toString(), equalTo("${hostname}${endpoint}?filter1=val1&filter2=val2" as String))
             assertThat(response.content, notNullValue())
             assertThat(response.responseCode, equalTo(200))
+    }
+
+    def "Return an OK HTTP response for a correct HTTPRequest with URL params and Security User and Password"() {
+        given:
+        def endpoint = "/todos/1"
+        def params = [filter1: "val1", filter2: "val2"]
+        setupHttpResponseWithSecurity(endpoint, "todos-1.json", params, "bG9naW46cHdk")
+
+        client.token = "login:pwd"
+
+        when:
+        def response = client.get(endpoint, params)
+
+        then:
+        assertThat(response, notNullValue())
+        assertThat(response.getURL().toString(), equalTo("${hostname}${endpoint}?filter1=val1&filter2=val2" as String))
+        assertThat(response.content, notNullValue())
+        assertThat(response.responseCode, equalTo(200))
     }
 
     def "Return an OK HTTP response for a correct POST HTTPRequest with URL params"() {

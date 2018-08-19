@@ -8,7 +8,9 @@ def call(final Map args) {
     final String gitToken = env.GIT_TOKEN
     final String gitPrId = env.CHANGE_ID ?: sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
 
-    final def coverage = new Coverage(env.SONAR_HOST_URL, env.SONAR_AUTH_TOKEN, gitRepo, gitToken)
+    final String sonarToken = env.SONAR_AUTH_TOKEN ?: "${ENV_SONAR_LOGIN}:${ENV_SONAR_PASSWORD}"
+
+    final def coverage = new Coverage(env.SONAR_HOST_URL, sonarToken, gitRepo, gitToken)
     final def projects = []
     final def newMetric = args.new_coverage ? (args.new_coverage) as Boolean : false
 
@@ -23,7 +25,6 @@ def call(final Map args) {
         echo "Error Code: ${e.code}"
         echo "Error message: ${e.message}"
         echo "Error Body: ${e.body}"
-        e.printStackTrace()
         throw e
     }
 

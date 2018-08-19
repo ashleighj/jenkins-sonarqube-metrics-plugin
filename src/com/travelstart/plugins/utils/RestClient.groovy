@@ -35,7 +35,8 @@ class RestClient {
         final def httpConnection = new URL(url).openConnection() as HttpURLConnection
 
         if (token) {
-            final def encoded = "${token}:".bytes.encodeBase64().toString()
+            final def auth = token.split(":")
+            final def encoded = "${auth[0]}:${auth.length > 1 ? auth[1] : ""}".bytes.encodeBase64().toString()
             httpConnection.setRequestProperty("Authorization", "Basic ${encoded}")
         }
 
