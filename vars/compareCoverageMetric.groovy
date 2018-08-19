@@ -1,4 +1,5 @@
 #!/usr/bin/env groovy
+import com.travelstart.plugins.exceptions.PluginException
 import com.travelstart.plugins.jenkins.sonar.Coverage
 
 def call(final Map args) {
@@ -22,6 +23,15 @@ def call(final Map args) {
     println(args.originalId)
     println(args.newId)
 
-    coverage.compare(gitPrId, projects, newMetric)
+    try {
+        coverage.compare(gitPrId, projects, newMetric)
+    } catch (PluginException e) {
+        println(e.code)
+        println(e.message)
+        println(e.body)
+        e.printStackTrace()
+        throw e
+    }
+
 
 }
