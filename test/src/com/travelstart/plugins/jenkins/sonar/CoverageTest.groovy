@@ -199,7 +199,7 @@ class CoverageTest extends BaseTest {
             generateGithubResponse("123", "github-status-request-success-48_92-57_4.json", "github-status-response-success-48_92-57_4.json", coverage.gitToken, 201, ["TARGET_URL", targetUrl])
 
         when:
-            def result = customCoverage.compare(prId, ["test:2", "test:1"])
+            customCoverage.compare(prId, ["test:2", "test:1"])
 
         then:
             def e = thrown(GithubException)

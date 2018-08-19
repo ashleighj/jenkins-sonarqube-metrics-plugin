@@ -2,7 +2,6 @@ package com.travelstart.plugins.utils
 
 import com.travelstart.plugins.BaseTest
 import groovy.json.JsonSlurper
-import org.mockserver.integration.ClientAndServer
 import org.mockserver.model.Parameter
 import spock.lang.Shared
 

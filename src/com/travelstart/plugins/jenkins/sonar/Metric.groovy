@@ -10,7 +10,7 @@ import groovy.json.JsonOutput
 abstract class Metric {
     String gitHostname = "https://api.github.com/repos"
     String context
-    String repository // sh(returnStdout: true, script: 'git config remote.origin.url').trim().replace("https://github.com","").replace(".git", "")}
+    String repository
     String gitToken
 
     static void isSuccessful(final HttpURLConnection urlConnection, final Class cls) {
