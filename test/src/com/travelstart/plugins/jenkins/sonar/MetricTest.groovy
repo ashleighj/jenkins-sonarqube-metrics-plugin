@@ -3,6 +3,7 @@ package com.travelstart.plugins.jenkins.sonar
 import com.travelstart.plugins.BaseTest
 import com.travelstart.plugins.exceptions.SonarqubeException
 import groovy.json.JsonSlurper
+import org.mockserver.model.Parameter
 import spock.lang.Shared
 
 import static org.hamcrest.MatcherAssert.assertThat
@@ -10,14 +11,41 @@ import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.mockito.Mockito.doReturn
 import static org.mockito.Mockito.mock
+import static org.mockserver.model.HttpRequest.request
+import static org.mockserver.model.HttpResponse.response
 
 class MetricTest extends BaseTest {
-
-    @Shared def parser = new JsonSlurper()
     @Shared def metric = new MetricImpl()
+    @Shared def parser = new JsonSlurper()
 
-    void generateGithubResponse(final String component, final String path, final String metrics) {
+    def setup() {
+        setupServer()
+    }
 
+    void cleanup() {
+        cleanupServer()
+    }
+
+    void generateGithubResponse(final String prId, final String reqPath, final String resPath,
+                                final String accessToken, final int statusCode = 201) {
+        final def urlParams = [new Parameter("access_token", accessToken)]
+        final def resBody = importFile(resPath).text
+        final def reqBody = importFile(reqPath).text
+
+        //https://localhost:{port}/repos/mock/repo/{prId}?{urlParams}
+        mockServer.when(
+                request()
+                        .withMethod("POST")
+                        .withPath("/mock/repo/${prId}")
+                        .withBody(reqBody)
+                        .withQueryStringParameters(urlParams)
+                        .withHeader("Content-Type", "application/json"))
+                .respond(
+                response()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(resBody)
+                        .withStatusCode(statusCode)
+        )
     }
 
     def "Raise An Exception if HTTP response status code is not between 200 and 299"() {
@@ -44,10 +72,9 @@ class MetricTest extends BaseTest {
         given:
             def response = mock(HttpURLConnection.class)
 
-            doReturn(200).when(response).responseCode
-
         when:
             (200..300).each {
+                doReturn(200).when(response).responseCode
                 Metric.isSuccessful(response)
             }
 
@@ -61,18 +88,22 @@ class MetricTest extends BaseTest {
             def prId = "435aaa4232342bbb"
             def authToken = "ab58dbai399"
 
+            def metricImpl = new MetricImpl(hostname as String)
+
+            generateGithubResponse(prId, "github-status-request-success.json", "github-status-response-success.json", authToken)
+
         when:
-            def response = metric.updateGithubPullRequestStatus(prId, authToken, request.state, request.target_url, request.description)
+            def response = metricImpl.updateGithubPullRequestStatus(prId, authToken, request.state, request.target_url, request.description)
 
         then:
             def body = parser.parseText(response.content.text as String)
-            assertThat(response.responseCode, equalTo(200..299))
+            assertThat(response.responseCode, equalTo(201))
             assertThat(body.id, notNullValue())
             assertThat(body.url, notNullValue())
-            assertThat(body.state, request.state)
-            assertThat(body.description, request.description)
-            assertThat(body.target_url, request.target_url)
-            assertThat(body.context, request.context)
+            assertThat(body.state, equalTo(request.state))
+            assertThat(body.description, equalTo(request.description))
+            assertThat(body.target_url, equalTo(request.target_url))
+            assertThat(body.context, equalTo(request.context))
             assertThat(body.creator, notNullValue())
 
     }
@@ -80,6 +111,12 @@ class MetricTest extends BaseTest {
     class MetricImpl extends Metric {
         MetricImpl() {
             context = "Mock Metric"
+            repository = "/mock/repo"
+        }
+
+        MetricImpl(final String gitHostname) {
+            this()
+            this.gitHostname = gitHostname
         }
     }
 }

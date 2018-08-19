@@ -20,7 +20,7 @@ class RestClientTest extends BaseTest {
     def client
 
     @Shared def parser = new JsonSlurper()
-    @Shared def random = new Random()
+
 
     def setup() {
         port = random.nextInt(6000) + 2000

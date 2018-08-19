@@ -1,6 +1,1 @@
-{
-  "state": "success",
-  "target_url": "http://www.google.com",
-  "context": "Mock Metric",
-  "description": "Description"
-}
+{"state":"success","target_url":"http://www.google.com","context":"Mock Metric","description":"Description"}

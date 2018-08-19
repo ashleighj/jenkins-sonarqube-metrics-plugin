@@ -2,7 +2,6 @@ package com.travelstart.plugins.jenkins.sonar
 
 import com.travelstart.plugins.BaseTest
 import com.travelstart.plugins.exceptions.DataIntegrityException
-import org.mockserver.integration.ClientAndServer
 import org.mockserver.model.Parameter
 import spock.lang.*
 
@@ -14,31 +13,19 @@ import static org.mockserver.model.HttpRequest.request
 import static org.mockserver.model.HttpResponse.response
 
 class CoverageTest extends BaseTest {
-    def hostname
-    def port
-    def mockServer
     def coverage
 
-    @Shared def random = new Random()
     @Shared def token = "1234567890"
     @Shared def gitToken = "1234567890"
     @Shared def gitRepo = "/mock/project"
 
     def setup() {
-        port = random.nextInt(6000) + 2000
-        hostname = "http://localhost:${port}"
-        mockServer = ClientAndServer.startClientAndServer(port)
+        setupServer()
         coverage = new Coverage(hostname, token, gitRepo, gitToken)
     }
 
     void cleanup() {
-        hostname = null
-        port = 0
-
-        if (mockServer != null) {
-            mockServer.stop()
-            mockServer = null
-        }
+        cleanupServer()
     }
 
     void generateOKCoverageResponses(final String component, final String path, final String metrics) {
