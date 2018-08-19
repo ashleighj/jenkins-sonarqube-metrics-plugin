@@ -92,7 +92,7 @@ class Coverage extends Metric {
         final def parser = new JsonSlurper()
 
         // Verifies that it was successful, otherwise raises an Exception
-        //isSuccessful(response, GithubException.class)
+        isSuccessful(response, GithubException.class)
 
         return parser.parseText(response.content.text as String)
     }
