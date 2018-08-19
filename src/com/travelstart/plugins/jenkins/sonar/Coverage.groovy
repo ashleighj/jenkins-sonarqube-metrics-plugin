@@ -41,7 +41,7 @@ class Coverage extends Metric {
             def final response = sonarqubeClient.get( "/api/measures/component", map)
 
             // Verifies that it was successful, otherwise raises an Exception
-            isSuccessful(response, SonarqubeException)
+            isSuccessful(response, SonarqubeException.class)
 
             def body = parser.parseText(response.content.text as String)
             result += retrieveValues(body, map)
@@ -92,7 +92,7 @@ class Coverage extends Metric {
         final def parser = new JsonSlurper()
 
         // Verifies that it was successful, otherwise raises an Exception
-        isSuccessful(response, GithubException)
+        isSuccessful(response, GithubException.class)
 
         return parser.parseText(response.content.text as String)
     }
