@@ -92,6 +92,11 @@ class MetricTest extends BaseTest {
             this()
             this.gitHostname = gitHostname
         }
+
+        @Override
+        def update(final String prId, final String state, final String targetUrl, final String description) {
+            return super.update(prId, state, targetUrl, description)
+        }
     }
 }
 
