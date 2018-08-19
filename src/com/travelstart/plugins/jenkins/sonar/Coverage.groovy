@@ -31,6 +31,7 @@ class Coverage extends Metric {
         return update(prId, comparison.state, targetUrl, comparison.message)
     }
 
+    @NonCPS
     Double[] retrieveCodeCoverageMetrics(final List<String> projects, final boolean isNew = false) {
         if (!projects)
             throw new DataIntegrityException("At least one project ID should be provided")

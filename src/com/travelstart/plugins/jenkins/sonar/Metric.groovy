@@ -36,7 +36,6 @@ abstract class Metric {
         }
     }
 
-    @NonCPS
     def updateGithubPullRequestStatus(final String prId, final String state,
                                       final String targetUrl, final String description) {
         def params = [access_token: gitToken]
