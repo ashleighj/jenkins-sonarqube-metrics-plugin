@@ -14,6 +14,7 @@ abstract class BaseTest extends Specification {
     def mockServer
 
     @Shared def random = new Random()
+    @Shared def gitRepo = "/mock/repo"
 
     final String packagePath = "test/resources/${getClass().getPackage().getName().replace(".", "/")}"
 
@@ -24,7 +25,7 @@ abstract class BaseTest extends Specification {
 
 
     def setupServer() {
-        port = random.nextInt(6000) + 2000
+        port = random.nextInt(7000) + 2000
         hostname = "http://localhost:${port}"
         mockServer = ClientAndServer.startClientAndServer(port)
     }
@@ -40,16 +41,22 @@ abstract class BaseTest extends Specification {
     }
 
     void generateGithubResponse(final String prId, final String reqPath, final String resPath,
-                                final String accessToken, final int statusCode = 201) {
-        final def urlParams = [new Parameter("access_token", accessToken)]
-        final def resBody = importFile(resPath).text
-        final def reqBody = importFile(reqPath).text
+                                final String accessToken, final int statusCode = 201,
+                                final List<String> targetUrl = []) {
+        def urlParams = [new Parameter("access_token", accessToken)]
+        def resBody = importFile(resPath).text
+        def reqBody = importFile(reqPath).text
+
+        if (targetUrl) {
+            reqBody = reqBody.replace(targetUrl[0], targetUrl[1])
+            resBody = resBody.replace(targetUrl[0], targetUrl[1])
+        }
 
         //https://localhost:{port}/repos/mock/repo/{prId}?{urlParams}
         mockServer.when(
                 request()
                         .withMethod("POST")
-                        .withPath("/mock/repo/${prId}")
+                        .withPath("${gitRepo}/${prId}")
                         .withBody(reqBody)
                         .withQueryStringParameters(urlParams)
                         .withHeader("Content-Type", "application/json"))

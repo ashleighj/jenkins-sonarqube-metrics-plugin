@@ -3,6 +3,8 @@ package com.travelstart.plugins.jenkins.sonar
 
 import com.cloudbees.groovy.cps.NonCPS
 import com.travelstart.plugins.exceptions.DataIntegrityException
+import com.travelstart.plugins.exceptions.GithubException
+import com.travelstart.plugins.exceptions.SonarqubeException
 import com.travelstart.plugins.utils.RestClient
 import groovy.json.JsonSlurper
 
@@ -25,7 +27,7 @@ class Coverage extends Metric {
         final def comparison = verifyCoverage(metrics)
         final def targetUrl = "${sonarqubeClient.hostname}/component_measures?id=${URLEncoder.encode(projects[0], "UTF-8")}&metric=coverage"
 
-        return updateGithubPullRequestStatus(prId, comparison.state, targetUrl, comparison.message).content
+        return update(prId, comparison.state, targetUrl, comparison.message)
     }
 
     @NonCPS
@@ -41,7 +43,7 @@ class Coverage extends Metric {
             def final response = sonarqubeClient.get( "/api/measures/component", map)
 
             // Verifies that it was successful, otherwise raises an Exception
-            isSuccessful(response)
+            isSuccessful(response, SonarqubeException)
 
             def body = parser.parseText(response.content.text as String)
 
@@ -52,7 +54,6 @@ class Coverage extends Metric {
     }
 
     static Map<String, String> verifyCoverage(final Double[] metrics) {
-
         if (metrics[0] > metrics[1])
             return [message: "New code reduced the coverage from ${metrics[0]}% to ${metrics[1]}%", state: "failure"]
         else
@@ -86,5 +87,17 @@ class Coverage extends Metric {
         }
 
         return result
+    }
+
+    @NonCPS
+    @Override
+    def update(final String prId, final String state, final String targetUrl, final String description) {
+        final def response = updateGithubPullRequestStatus(prId, state, targetUrl, description)
+        final def parser = new JsonSlurper()
+
+        // Verifies that it was successful, otherwise raises an Exception
+        isSuccessful(response, GithubException)
+
+        return parser.parseText(response.content.text as String)
     }
 }

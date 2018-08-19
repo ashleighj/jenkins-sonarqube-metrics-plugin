@@ -3,7 +3,6 @@ package com.travelstart.plugins.jenkins.sonar
 import com.travelstart.plugins.BaseTest
 import com.travelstart.plugins.exceptions.SonarqubeException
 import groovy.json.JsonSlurper
-import org.mockserver.model.Parameter
 import spock.lang.Shared
 
 import static org.hamcrest.MatcherAssert.assertThat
@@ -33,7 +32,7 @@ class MetricTest extends BaseTest {
             doReturn(importFile("404.json").text).when(response).content
 
         when:
-            Metric.isSuccessful(response)
+            Metric.isSuccessful(response, SonarqubeException)
 
         then:
             def e = thrown(SonarqubeException)
@@ -51,7 +50,7 @@ class MetricTest extends BaseTest {
         when:
             (200..300).each {
                 doReturn(200).when(response).responseCode
-                Metric.isSuccessful(response)
+                Metric.isSuccessful(response, SonarqubeException)
             }
 
         then:
@@ -92,6 +91,11 @@ class MetricTest extends BaseTest {
         MetricImpl(final String gitHostname) {
             this()
             this.gitHostname = gitHostname
+        }
+
+        @Override
+        def update(final String prId, final String state, final String targetUrl, final String description) {
+            return super.update(prId, state, targetUrl, description)
         }
     }
 }

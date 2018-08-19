@@ -1,23 +1,35 @@
 #!/usr/bin/groovy
 package com.travelstart.plugins.jenkins.sonar
 
+import com.travelstart.plugins.exceptions.GithubException
+import com.travelstart.plugins.exceptions.PluginException
 import com.travelstart.plugins.exceptions.SonarqubeException
 import com.travelstart.plugins.utils.RestClient
 import groovy.json.JsonOutput
 
 abstract class Metric {
+    String gitHostname = "https://api.github.com/repos"
     String context
     String repository // sh(returnStdout: true, script: 'git config remote.origin.url').trim().replace("https://github.com","").replace(".git", "")}
     String gitToken
 
-    String gitHostname = "https://api.github.com/repos"
-
-    static void isSuccessful(final HttpURLConnection urlConnection) {
+    static void isSuccessful(final HttpURLConnection urlConnection, final Class cls) {
         if (!(urlConnection.responseCode in 200..300)) {
-            final SonarqubeException e = new SonarqubeException()
+            final PluginException e
+
+            if (cls == SonarqubeException)
+                e = new SonarqubeException()
+            else
+                e = new GithubException()
+
             e.message = urlConnection.responseMessage
             e.code = urlConnection.responseCode
-            e.body = urlConnection.content
+
+            try {
+                e.body = urlConnection.content
+            } catch (Exception ex) {
+                e.body = ex.message
+            }
 
             throw e
         }
@@ -32,4 +44,5 @@ abstract class Metric {
         return githubClient.post("${repository}/${prId}", params, JsonOutput.toJson(body))
     }
 
+    abstract def update(final String prId, final String state, final String targetUrl, final String description)
 }

@@ -1,8 +1,8 @@
 {
   "url": "https://api.github.com/repos/someUrl",
   "id": 856289111112,
-  "state": "failure",
-  "description": "New code reduced the coverage from 57.4% to 48.92%",
+  "state": "success",
+  "description": "New code increased the coverage from 48.92% to 57.4%",
   "target_url": "TARGET_URL",
   "context": "Code Coverage",
   "creator": {

@@ -14,29 +14,18 @@ import static org.mockserver.model.HttpRequest.request
 import static org.mockserver.model.HttpResponse.response
 
 class RestClientTest extends BaseTest {
-    def port
-    def hostname
-    def mockServer
     def client
 
     @Shared def parser = new JsonSlurper()
 
-
     def setup() {
-        port = random.nextInt(6000) + 2000
-        hostname = "http://localhost:${port}"
+        setupServer()
         client = new RestClient(hostname: hostname)
-        mockServer = ClientAndServer.startClientAndServer(port)
     }
 
     void cleanup() {
-        port = 0
+        cleanupServer()
         client = null
-
-        if (mockServer != null) {
-            mockServer.stop()
-            mockServer = null
-        }
     }
 
     void setupHttpResponseWithoutSecurity(final String endpoint, final String path,
