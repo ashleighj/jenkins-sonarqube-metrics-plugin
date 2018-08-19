@@ -24,7 +24,7 @@ abstract class BaseTest extends Specification {
     }
 
     def setupServer() {
-        port = random.nextInt(8000) + 1000
+        port = random.nextInt(9000) + 1000
         hostname = "http://localhost:${port}"
         mockServer = ClientAndServer.startClientAndServer(port)
     }
