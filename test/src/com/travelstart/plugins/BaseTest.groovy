@@ -22,10 +22,9 @@ abstract class BaseTest extends Specification {
         final def uri = new File("${packagePath}/${path}").toURI()
         return new File(uri)
     }
-
-
+    
     def setupServer() {
-        port = random.nextInt(7000) + 2000
+        port = random.nextInt(8000) + 1000
         hostname = "http://localhost:${port}"
         mockServer = ClientAndServer.startClientAndServer(port)
     }
@@ -56,7 +55,7 @@ abstract class BaseTest extends Specification {
         mockServer.when(
                 request()
                         .withMethod("POST")
-                        .withPath("${gitRepo}/${prId}")
+                        .withPath("${gitRepo}/statuses/${prId}")
                         .withBody(reqBody)
                         .withQueryStringParameters(urlParams)
                         .withHeader("Content-Type", "application/json"))

@@ -41,7 +41,7 @@ abstract class Metric {
         def body = [state: state, target_url: targetUrl, context: context, description: description]
         def githubClient = new RestClient(hostname: gitHostname)
 
-        return githubClient.post("${repository}/${prId}", params, JsonOutput.toJson(body))
+        return githubClient.post("${repository}/statuses/${prId}", params, JsonOutput.toJson(body))
     }
 
     abstract def update(final String prId, final String state, final String targetUrl, final String description)
