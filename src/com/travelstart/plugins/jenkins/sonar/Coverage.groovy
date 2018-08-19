@@ -91,8 +91,8 @@ class Coverage extends Metric {
         final def response = updateGithubPullRequestStatus(prId, state, targetUrl, description)
         final def parser = new JsonSlurper()
 
-        echo "${response.class.getName()}"
-        echo "${GithubException.class.getName()}"
+        println "${response.class.getName()}"
+        println "${GithubException.class.getName()}"
 
         // Verifies that it was successful, otherwise raises an Exception
         isSuccessful(response, GithubException.class)
