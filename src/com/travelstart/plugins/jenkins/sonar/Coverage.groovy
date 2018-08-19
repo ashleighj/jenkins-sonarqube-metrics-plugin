@@ -15,7 +15,7 @@ class Coverage extends Metric {
     RestClient sonarqubeClient
 
     Coverage(final String url, final String sonarToken, final String gitRepo, final String gitToken) {
-        this.sonarqubeClient = new RestClient(hostname: url, token: sonarToken)
+        this.sonarqubeClient = new RestClient(hostname: url.replaceAll(/\/$/, ""), token: sonarToken)
         this.context = CONTEXT
         this.repository = gitRepo
         this.gitToken = gitToken

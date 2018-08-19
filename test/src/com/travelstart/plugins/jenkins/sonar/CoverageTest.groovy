@@ -64,6 +64,19 @@ class CoverageTest extends BaseTest {
             assertThat(coverage.sonarqubeClient.hostname, equalTo(hostname as String))
     }
 
+    def "Coverage Object was build with the correct parameters even with final / at the end of the hostname"() {
+        when:
+            def coverage = new Coverage(hostname + "/", token, gitRepo, gitToken)
+
+        then:
+            assertThat(coverage.context, equalTo(Coverage.CONTEXT))
+            assertThat(coverage.repository, equalTo(gitRepo))
+            assertThat(coverage.gitToken, equalTo(gitToken))
+            assertThat(coverage.sonarqubeClient, notNullValue())
+            assertThat(coverage.sonarqubeClient.token, equalTo(token))
+            assertThat(coverage.sonarqubeClient.hostname, equalTo(hostname as String))
+    }
+
     def "Get a coverage metric for one project from Sonarqube"() {
         given:
             generateOKCoverageResponses("test:1", "metric-coverage-57_4-OK.json")
