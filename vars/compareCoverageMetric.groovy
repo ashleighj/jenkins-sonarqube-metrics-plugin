@@ -23,9 +23,7 @@ def call(final Map args) {
         try {
             coverage.compare(gitPrId, projects, newMetric)
         } catch (PluginException e) {
-            echo "Error Code: ${e.code}"
-            echo "Error message: ${e.message}"
-            echo "Error Body: ${e.body}"
+            echo "Error Code: ${e.code}, Error message: ${e.message}, Error Body: ${e.body}"
             throw e
         }
     }
