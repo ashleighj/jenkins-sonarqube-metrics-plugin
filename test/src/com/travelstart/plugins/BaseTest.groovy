@@ -36,6 +36,8 @@ abstract class BaseTest extends Specification {
         if (mockServer != null) {
             mockServer.stop()
             mockServer = null
+
+            sleep(50) // Adds 30 milliseconds of Cooldown (to avoid overlapping of connections)
         }
     }
 

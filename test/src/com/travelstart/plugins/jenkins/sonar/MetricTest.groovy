@@ -26,13 +26,14 @@ class MetricTest extends BaseTest {
     def "Raise An Exception if HTTP response status code is not between 200 and 299"() {
         given:
             def response = mock(HttpURLConnection.class)
+            def metricImpl = new MetricImpl(hostname as String)
 
             doReturn(404).when(response).responseCode
             doReturn("Not Found").when(response).responseMessage
             doReturn(importFile("404.json").text).when(response).content
 
         when:
-            Metric.isSuccessful(response, SonarqubeException)
+            metricImpl.isSuccessful(response, SonarqubeException)
 
         then:
             def e = thrown(SonarqubeException)
@@ -46,11 +47,12 @@ class MetricTest extends BaseTest {
     def "Continue without failure if HTTP response code is between 200 and 299"() {
         given:
             def response = mock(HttpURLConnection.class)
+            def metricImpl = new MetricImpl(hostname as String)
 
         when:
             (200..300).each {
                 doReturn(200).when(response).responseCode
-                Metric.isSuccessful(response, SonarqubeException)
+                metricImpl.isSuccessful(response, SonarqubeException)
             }
 
         then:

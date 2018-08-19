@@ -13,7 +13,7 @@ abstract class Metric {
     String repository
     String gitToken
 
-    static void isSuccessful(final HttpURLConnection urlConnection, final Class cls) {
+    void isSuccessful(final HttpURLConnection urlConnection, final Class cls) {
         if (!(urlConnection.responseCode in 200..300)) {
             final PluginException e
 
