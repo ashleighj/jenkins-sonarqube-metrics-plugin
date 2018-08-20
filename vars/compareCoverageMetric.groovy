@@ -15,14 +15,16 @@ def call(final Map args) {
         final def projects = []
         final def newMetric = args.new_coverage ? (args.new_coverage) as Boolean : false
 
-        args.containsKey("originalId") ?: projects.add(args.originalId)
-        args.containsKey("newId") ?: projects.add(args.newId)
+        if (args.originalId)
+            projects.add(args.originalId)
+
+        if (args.originalId)
+            projects.add(args.newId)
 
         try {
             coverage.compare(gitPrId, projects, newMetric)
             echo "Coverage Metric FINISHED! GitRepo: ${gitRepo}, GitPullRequestId: ${gitPrId}, SonarHost: ${env.SONAR_HOST_URL}"
         } catch (PluginException e) {
-            echo "Coverage Metric FAILED! GitRepo: ${gitRepo}, GitPullRequestId: ${gitPrId}, SonarHost: ${env.SONAR_HOST_URL}"
             echo "Error Code: ${e.code}, Error message: ${e.message}, Error Body: ${e.body}"
             throw e
         }
