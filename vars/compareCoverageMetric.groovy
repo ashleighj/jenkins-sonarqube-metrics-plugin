@@ -22,6 +22,7 @@ def call(final Map args) {
             coverage.compare(gitPrId, projects, newMetric)
             echo "Coverage Metric FINISHED! GitRepo: ${gitRepo}, GitPullRequestId: ${gitPrId}, SonarHost: ${env.SONAR_HOST_URL}"
         } catch (PluginException e) {
+            echo "Coverage Metric FAILED! GitRepo: ${gitRepo}, GitPullRequestId: ${gitPrId}, SonarHost: ${env.SONAR_HOST_URL}"
             echo "Error Code: ${e.code}, Error message: ${e.message}, Error Body: ${e.body}"
             throw e
         }
