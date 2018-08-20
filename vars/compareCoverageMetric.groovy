@@ -16,10 +16,10 @@ def call(final Map args) {
         final def newMetric = args.new_coverage ? (args.new_coverage) as Boolean : false
 
         if (args.originalId)
-            projects.add(args.originalId)
+            projects.add(args.originalId as String)
 
         if (args.originalId)
-            projects.add(args.newId)
+            projects.add(args.newId as String)
 
         try {
             coverage.compare(gitPrId, projects, newMetric)
