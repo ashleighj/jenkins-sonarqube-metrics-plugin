@@ -3,9 +3,7 @@ import com.travelstart.plugins.exceptions.PluginException
 import com.travelstart.plugins.jenkins.sonar.Coverage
 
 def call(final Map args) {
-
-    echo "${args}"
-
+    
     withCredentials([string(credentialsId: 'github-sonarqube-oauth', variable: 'GIT_SONAR_TOKEN_LOCAL')]) {
         final String gitToken = env.GIT_SONAR_TOKEN ?: "${GIT_SONAR_TOKEN_LOCAL}"
 
