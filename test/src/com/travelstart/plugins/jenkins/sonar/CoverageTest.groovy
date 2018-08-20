@@ -51,7 +51,7 @@ class CoverageTest extends BaseTest {
         generateOKCoverageResponses(component, path, "coverage")
     }
 
-    def "Coverage Object was build with the correct parameters"() {
+    def "Coverage Object was built with the correct parameters"() {
         when:
             coverage
 
@@ -64,7 +64,7 @@ class CoverageTest extends BaseTest {
             assertThat(coverage.sonarqubeClient.hostname, equalTo(hostname as String))
     }
 
-    def "Coverage Object was build with the correct parameters even with final / at the end of the hostname"() {
+    def "Coverage Object was built with the correct parameters even with final / at the end of the hostname"() {
         when:
             def coverage = new Coverage(hostname + "/", token, gitRepo, gitToken)
 
@@ -184,6 +184,28 @@ class CoverageTest extends BaseTest {
             assertThat(result.context, equalTo(Coverage.CONTEXT))
             assertThat(result.target_url, equalTo(targetUrl as String))
             assertThat(result.description, equalTo("New code reduced the coverage from 57.4% to 48.92%"))
+    }
+
+    def "Verify coverage of 2 projects"() {
+        given:
+            def coverages = [50, 60.2] as Double[]
+
+        when:
+            def result = coverage.verifyCoverage(coverages)
+        then:
+            assertThat(result.message as String, equalTo("New code increased the coverage from 50.0% to 60.2%"))
+            assertThat(result.state as String, equalTo("success"))
+    }
+
+    def "Verify coverage and new coverage of 2 projects"() {
+        given:
+            def coverages = [50, 20.2, 60.2, 70.02] as Double[]
+
+        when:
+            def result = coverage.verifyCoverage(coverages)
+        then:
+            assertThat(result.message as String, equalTo("New code increased the coverage from 50.0% to 60.2%"))
+            assertThat(result.state as String, equalTo("success"))
     }
 
     def "Compare Coverage Metric and update status for success"() {

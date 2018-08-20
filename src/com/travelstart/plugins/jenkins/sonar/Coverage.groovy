@@ -36,9 +36,9 @@ class Coverage extends Metric {
         Double[] result = []
 
         projects.each {
-            def final map = createUrlParams(it, isNew)
-            def final parser = new JsonSlurper()
-            def final response = sonarqubeClient.get( "/api/measures/component", map)
+            final def map = createUrlParams(it, isNew)
+            final def parser = new JsonSlurper()
+            final def response = sonarqubeClient.get( "/api/measures/component", map)
 
             // Verifies that it was successful, otherwise raises an Exception
             isSuccessful(response, SonarqubeException)
@@ -51,10 +51,11 @@ class Coverage extends Metric {
     }
 
     static Map<String, String> verifyCoverage(final Double[] metrics) {
-        if (metrics[0] > metrics[1])
-            return [message: "New code reduced the coverage from ${metrics[0]}% to ${metrics[1]}%", state: "failure"]
+        final def newPos = (metrics.length / 2) as Integer
+        if (metrics[0] > metrics[newPos])
+            return [message: "New code reduced the coverage from ${metrics[0]}% to ${metrics[newPos]}%", state: "failure"]
         else
-            return [message: "New code increased the coverage from ${metrics[0]}% to ${metrics[1]}%", state: "success"]
+            return [message: "New code increased the coverage from ${metrics[0]}% to ${metrics[newPos]}%", state: "success"]
     }
 
     static Map<String, String> createUrlParams(final String projectId, final boolean isNew) {
