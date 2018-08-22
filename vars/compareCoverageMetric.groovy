@@ -4,11 +4,11 @@ import com.travelstart.plugins.jenkins.sonar.Coverage
 
 def call(final Map args) {
 
-    withCredentials([string(credentialsId: 'github-sonarqube-oauth', variable: 'GIT_SONAR_TOKEN_LOCAL')]) {
+    withCredentials([string(credentialsId: "github-sonarqube-oauth", variable: "GIT_SONAR_TOKEN_LOCAL")]) {
         final String gitToken = env.GIT_SONAR_TOKEN ?: "${GIT_SONAR_TOKEN_LOCAL}"
 
-        final String gitRepo = env.GIT_REPO ?: sh(returnStdout: true, script: 'git config remote.origin.url').trim().replace("https://github.com","").replace(".git", "")
-        final String gitPrId = env.GIT_COMMIT ?: sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+        final String gitRepo = env.GIT_REPO ?: sh(returnStdout: true, script: "git config remote.origin.url").trim().replace("https://github.com","").replace(".git", "")
+        final String gitPrId = env.GIT_COMMIT ?: sh(returnStdout: true, script: "git rev-parse HEAD").trim()
         final String sonarToken = env.SONAR_AUTH_TOKEN ?: "${env.SONAR_LOGIN}:${env.SONAR_PASSWORD}"
 
         final def coverage = new Coverage(env.SONAR_HOST_URL, sonarToken, gitRepo, gitToken)

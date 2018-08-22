@@ -25,7 +25,7 @@ class MetricTest extends BaseTest {
 
     def "Raise An Exception if HTTP response status code is not between 200 and 299"() {
         given:
-            def response = mock(HttpURLConnection.class)
+            def response = mock(HttpURLConnection)
             def metricImpl = new MetricImpl(hostname as String)
 
             doReturn(404).when(response).responseCode
@@ -46,7 +46,7 @@ class MetricTest extends BaseTest {
 
     def "Continue without failure if HTTP response code is between 200 and 299"() {
         given:
-            def response = mock(HttpURLConnection.class)
+            def response = mock(HttpURLConnection)
             def metricImpl = new MetricImpl(hostname as String)
 
         when:
