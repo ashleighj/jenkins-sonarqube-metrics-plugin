@@ -1,0 +1,12 @@
+{
+  "url": "https://api.github.com/repos/someUrl",
+  "id": 856289111112,
+  "state": "success",
+  "description": "New code increased the coverage from 48.92% to 57.4%",
+  "target_url": "TARGET_URL",
+  "context": "Code Coverage",
+  "creator": {
+    "login": "juancho088",
+    "type": "User"
+  }
+}
